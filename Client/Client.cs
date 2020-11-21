@@ -1,31 +1,26 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Grpc.Core;
-using Shared;
 
 namespace Client
 {
     internal class Client
     {
-        private static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            var host = args[0];
-            var port = int.Parse(args[1]);
-            var x = long.Parse(args[2]);
-            var op = args[3];
-            var y = long.Parse(args[4]);
-            var channel = new Channel(
-                host,
-                port,
-                ChannelCredentials.Insecure);
+            var host = args.Any() ? args[0] : "localhost";
+            var port = args.Length == 2 ? int.Parse(args[1]) : 9000;
 
-            var client = new CalcService.CalcServiceClient(channel);
-            var reply = client.Calculate(new CalculateRequest
-            {
-                X = x,
-                Y = y,
-                Op = op
-            });
-            Console.WriteLine($"The calculated result is: {reply.Result}");
+            var channel = new Channel(host, port, ChannelCredentials.Insecure);
+
+            var calcClient = new CalculatorClient(channel);
+            calcClient.ExecuteAllOperations();
+            Console.WriteLine($"Press any key to run streaming example...");
+            Console.ReadKey();
+
+            var client = new TemperatureClient(channel);
+            await client.Execute();
         }
     }
 }

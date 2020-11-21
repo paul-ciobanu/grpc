@@ -12,7 +12,11 @@ namespace Server
             var port = args.Any() ? int.Parse(args[0]) : 9000;
             var server = new Grpc.Core.Server
             {
-                Services = { CalcService.BindService(new CalculatorService()) },
+                Services =
+                {
+                    CalcService.BindService(new CalculatorService()),
+                    TempService.BindService(new TemperatureService())
+                },
                 Ports = { new ServerPort("0.0.0.0", port, ServerCredentials.Insecure) }
             };
             server.Start();

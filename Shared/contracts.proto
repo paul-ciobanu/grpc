@@ -15,3 +15,13 @@ message CalculateReply{
 service CalcService {
     rpc Calculate (CalculateRequest) returns (CalculateReply);
 }
+
+
+message Temperature {
+    int64 timestamp = 1;
+    double value = 2;
+}
+
+service TempService {
+    rpc Median (stream Temperature) returns (stream Temperature);
+}
