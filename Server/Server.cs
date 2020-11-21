@@ -1,12 +1,23 @@
 ﻿using System;
+using System.Linq;
+using Grpc.Core;
+using Shared;
 
 namespace Server
 {
-    internal class Server
+    internal class Program
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var port = args.Any() ? int.Parse(args[0]) : 9000;
+            var server = new Grpc.Core.Server
+            {
+                Services = { CalcService.BindService(new CalculatorService()) },
+                Ports = { new ServerPort("0.0.0.0", port, ServerCredentials.Insecure) }
+            };
+            server.Start();
+            Console.WriteLine($"Server listening at port {port}. Press any key to terminate...");
+            Console.ReadKey();
         }
     }
 }
